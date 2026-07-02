@@ -101,3 +101,15 @@ CREATE TABLE IF NOT EXISTS FEEDBACK (
     FOREIGN KEY (ClientID) REFERENCES CLIENT(ClientID) ON DELETE CASCADE
 );
 
+CREATE INDEX idx_account_client ON ACCOUNT(ClientID);
+CREATE INDEX idx_transaction_source ON TRANSACTION(SourceAccount);
+CREATE INDEX idx_loan_type ON LOAN(LoanType);
+
+CREATE VIEW client_account_summary AS
+SELECT c.ClientID, c.first_name, c.last_name, 
+       COUNT(a.AccountNumber) as account_count,
+       SUM(a.Balance) as total_balance
+FROM CLIENT c
+LEFT JOIN ACCOUNT a ON c.ClientID = a.ClientID
+GROUP BY c.ClientID, c.first_name, c.last_name;
+
